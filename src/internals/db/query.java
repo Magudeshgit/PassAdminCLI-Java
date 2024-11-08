@@ -10,8 +10,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import internals.formatters.dataformatter;
 
 public class query {
-    final private String dburl = "https://api.cloudflare.com/client/v4/accounts/208d0f24df52505b5e34ad8d4adaf567/d1/database/61afa940-e3a1-466b-8828-71c4c0d25081/query";
-    final private String apikey = "-iBAoKoLIzQbuQ_X7p-AEh7J1LdhVUJK3ht0iPRa";
+    final private String dburl = "";
+    final private String apikey = "";
     dataformatter formatter =  new dataformatter();
 
     public void insertPassword(String account, String username, String passwd) throws Exception
