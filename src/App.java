@@ -18,7 +18,15 @@ class App
        {
         System.out.printf("\n\n%s%sPassAdmin%s\n", formatText.GREEN, formatText.BOLD, formatText.TXRESET);
         System.out.printf("%s%sA Safe and Secure password management tool%s\n", formatText.GREEN, formatText.BOLD, formatText.TXRESET);
-        System.out.printf("\n%sChoose What do you want to do.?\n1. View Password \n2. Add Password \n3. Modify Password\n\nEnter you choice.: %s", formatText.BOLD, formatText.TXRESET);
+        System.out.printf("""
+                        \n%sChoose What do you want to do.?
+                        1. View Password 
+                        2. View All Passwords
+                        3. Add Password 
+                        4. Modify
+                        5. Delete
+                        6. Exit
+                        \nEnter you choice.: %s""", formatText.BOLD, formatText.TXRESET);
         if (inp.hasNextInt())
         {
             choice = inp.nextInt();
@@ -34,18 +42,27 @@ class App
 
         switch (choice) {
             case 1:
-                System.out.println("View Password");
+                operation.viewPassword();
                 break;
             case 2:
+                operation.viewAllPasswords();
+                break;
+            case 3:
                 operation.addPassword();
                 break;
 
-            case 3:
-                System.out.println("Modify Password");
+            case 4:
+                operation.modifyRecord();
                 break;
-        
+            case 5:
+                operation.deletRecord();
+                break;
+            case 6:
+                System.out.printf("\n%s%sThankyou for using PassAdminCLI%s\n", formatText.GREEN, formatText.BOLD, formatText.TXRESET);
+                flag=false;
+                break;
             default:
-                flag = false;
+                System.out.printf("%sInvalid Option, Please choose a valid option.%s", formatText.BOLD, formatText.TXRESET);
                 break;
             }   
 

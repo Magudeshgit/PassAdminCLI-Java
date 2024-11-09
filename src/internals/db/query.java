@@ -10,8 +10,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import internals.formatters.dataformatter;
 
 public class query {
-    final private String dburl = "https://api.cloudflare.com/client/v4/accounts/208d0f24df52505b5e34ad8d4adaf567/d1/database/61afa940-e3a1-466b-8828-71c4c0d25081/query";
-    final private String apikey = "-iBAoKoLIzQbuQ_X7p-AEh7J1LdhVUJK3ht0iPRa";
+    final private String dburl = "";
+    final private String apikey = "";
     dataformatter formatter =  new dataformatter();
 
     public void insertPassword(String account, String username, String passwd) throws Exception
@@ -32,6 +32,65 @@ public class query {
         }
 
     }
+
+    // Returns a JSON Array consisting JSON Objects of the search results
+    public JSONArray getRecords(String searchaccount) throws Exception
+    {
+        String formQuery;
+        if  (searchaccount != null)
+        {
+            formQuery = "SELECT * FROM passadmin WHERE account=\\\"%s\\\";";
+            formQuery = String.format(formQuery, searchaccount);
+        }
+        else
+        {
+            formQuery = "SELECT * FROM passadmin;";
+        }
+        JSONObject resp = sender(formQuery);
+        JSONArray results = resp.getJSONArray("result").getJSONObject(0).getJSONArray("results");
+        
+        return results;
+    }
+
+    public Boolean modifyRecord(String currUsername, 
+                             String currPassword,
+                             String newUsername,
+                             String newPassword,
+                             Boolean modifyPassword) throws Exception
+    {
+        Boolean status = false;
+        if (modifyPassword)
+        {
+            
+
+            String formQuery = "UPDATE passadmin SET password = \\\"%s\\\" WHERE password=\\\"%s\\\"";
+            formQuery = String.format(formQuery, newPassword, currPassword);
+            
+            JSONObject resp = sender(formQuery);
+            status = resp.getBoolean("success");
+            
+        }
+        else
+        {
+            String formQuery = "UPDATE passadmin SET username = \\\"%s\\\" WHERE password=\\\"%s\\\"";
+            formQuery = String.format(formQuery, newUsername, currPassword);
+            
+
+            JSONObject resp = sender(formQuery);
+            status = resp.getBoolean("success");
+        }
+        return status;
+    }
+
+    public Boolean deleteRecord(String password) throws Exception
+    {
+        String formQuery = "DELETE from passadmin WHERE password='%s'";
+        formQuery = String.format(formQuery, password);
+        
+        JSONObject resp = sender(formQuery);
+        return resp.getBoolean("success");
+    }
+
     private JSONObject sender(String queryString) throws Exception
     {
         // _query
@@ -47,42 +106,12 @@ public class query {
 
         // Instantiating a HTTP CLIENT to propogate the request
         HttpClient client = HttpClient.newHttpClient();
+        System.out.println("Querying Database...");
         HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
         JSONObject json = new JSONObject(resp.body());
         return json;
     }
+
+    
     
 }
-
-// import java.net.http.HttpRequest;
-// import java.net.http.HttpRequest.BodyPublishers;
-// import java.net.URI;
-// import java.net.http.HttpResponse;
-// import java.net.http.HttpClient;
-// // DBID: 61afa940-e3a1-466b-8828-71c4c0d25081;
-// // ACCID: 208d0f24df52505b5e34ad8d4adaf567
-// // -iBAoKoLIzQbuQ_X7p-AEh7J1LdhVUJK3ht0iPRa
-
-// public class projectx {
-//     public static void main(String[] args)
-//     {
-//         HttpRequest post = HttpRequest.newBuilder()
-//         .uri(URI.create("https://api.cloudflare.com/client/v4/accounts/208d0f24df52505b5e34ad8d4adaf567/d1/database/61afa940-e3a1-466b-8828-71c4c0d25081/query"))
-//         .header("Authorization", "Bearer -iBAoKoLIzQbuQ_X7p-AEh7J1LdhVUJK3ht0iPRa")
-//         .POST(BodyPublishers.ofString("{\"sql\": \"select * from comments\"}"))
-//         .build();
-//         System.out.println("Gone");
-
-//         HttpClient client = HttpClient.newHttpClient();
-//         try
-//         {
-//             HttpResponse<String> response = client.send(post, HttpResponse.BodyHandlers.ofString());
-//             System.out.println(response.body());
-//         }
-//         catch (Exception e)
-//         {
-//             e.printStackTrace();
-//         }
-//     }
-
-// }
